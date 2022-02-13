@@ -9,6 +9,30 @@ button, input, optgroup, select, textarea {
   line-height: inherit;
 }
 
+
+button {
+  background-color: #026aa7;
+  border: none;
+  box-shadow: none;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken(#026aa7, 10);
+  }
+
+  &.btn-icon {
+    background-color: transparent;
+    color: #026aa7;
+    &:hover {
+      color: darken(#026aa7, 10)
+    }
+  }
+}
+
+
 .form-label {
   margin-bottom: .5rem;
   display: inline-block;

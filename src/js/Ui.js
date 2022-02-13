@@ -1,9 +1,16 @@
+import Methods from './API/Methods';
+import TicketController from './TicketController';
+
 export default class Ui {
   constructor() {
     this.container = null;
+    this.ctrl = new TicketController();
+    this.tickets = null;
+    this.methods = new Methods();
     this.addTicketButton = null;
     this.addTicketClickListeners = [];
     this.newTicketClickListeners = [];
+    this.toggleTicketStatusListeners = [];
   }
 
   bindToDOM(container) {
@@ -13,20 +20,58 @@ export default class Ui {
     this.container = container;
   }
 
+  buildTickerList(obj) {
+    if (!obj) {
+      return;
+    }
+
+    [...obj].forEach(ticket => {
+      const ticketDiv = document.createElement('div');
+      ticketDiv.classList.add('ticket');
+      ticketDiv.dataset.id = `id${ticket.id}`;
+      ticketDiv.innerHTML = `
+        <div class="checkbox" data-checkbox="${ticket.status}"><span>${ticket.status}</span></div>
+        <div class="body" data-id="body"><div class="name">${ticket.name}</div></div>
+        <div data-id="time">${ticket.created}</div>
+        <div class="controls">
+          <button class="btn-icon" type="button" data-id="edit"><i class="fa-solid fa-pencil"></i></button>
+          <button class="btn-icon" type="button" data-id="delete"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      `;
+      ticketDiv.querySelector('.checkbox').addEventListener('click', () => this.onToggleTicketStatusClick(ticket.id));
+      ticketDiv.querySelector('[data-id="body"]').addEventListener('click', evt => this.toggleDescription(evt, ticket.id));
+      this.tickets.appendChild(ticketDiv);
+    });
+  }
+
+  toggleTicketStatus(id, status) {
+    console.log(id, status);
+  }
+
+  toggleDescription(evt, id) {
+    console.log(evt, id);
+  }
+
   drawUi() {
     this.checkBinding();
     const ticketsSection = document.createElement('div');
     ticketsSection.classList.add('tickets');
     ticketsSection.innerHTML = `
-      <div class="tickets--header">
-        <button type="button" data-id="addTicket">Добавить тикет</button>
+      <div class="tickets-header">
+        <button type="button" data-id="addTicket">Добавить тикет <i class="fa-solid fa-plus"></i></button>
       </div>
       <div class="tickets-list"></div>
     `;
     this.addTicketButton = ticketsSection.querySelector('[data-id="addTicket"]');
     this.addTicketButton.addEventListener('click', evt => this.onAddTicketClick(evt));
 
+    this.tickets = ticketsSection.querySelector('.tickets-list');
+
     this.container.appendChild(ticketsSection);
+
+    this.methods.getAllTickets(response => {
+      this.buildTickerList(response);
+    });
   }
 
   openModal(modalName, ticketId = '') {
@@ -128,6 +173,19 @@ export default class Ui {
 
   onNewTicketClick(event) {
     this.newTicketClickListeners.forEach(o => o.call(null, event));
+  }
+
+  /**
+   * Add listener to mouse click for Toggle status Button
+   *
+   * @param callback
+   */
+  toggleTicketStatusListener(callback) {
+    this.toggleTicketStatusListeners.push(callback);
+  }
+
+  onToggleTicketStatusClick(id) {
+    this.toggleTicketStatusListeners.forEach(o => o.call(null, id));
   }
 
   closeModal() {

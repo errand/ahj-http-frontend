@@ -1,6 +1,12 @@
+@import "~normalize.css/normalize.css";
 @import 'layout';
 @import 'forms';
 @import 'components/modal';
+@import 'components/tickets';
+
+*, ::after, ::before {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
@@ -11,35 +17,16 @@ body {
   position: relative;
   font-size: 16px;
   height: 100%;
-  background-color: #f4f5f7;
+  background-color: gainsboro;
   overflow: hidden;
   z-index: 0;
   font-family: 'Roboto', sans-serif;
-}
-
-.main-header {
-  height: 44px;
 }
 
 .main-content {
   height: 100%;
   position: relative;
 }
-
-button {
-  background-color: #026aa7;
-  border: none;
-  box-shadow: none;
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 3px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darken(#026aa7, 10);
-  }
-}
-
 
 .sr-only {
   position: absolute;

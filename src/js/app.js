@@ -1,5 +1,5 @@
-import TicketController from "./TicketController";
-import Ui from "./Ui";
+import TicketController from './TicketController';
+import Ui from './Ui';
 
 const ui = new Ui();
 ui.bindToDOM(document.querySelector('#ticketsContainer'));

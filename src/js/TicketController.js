@@ -11,6 +11,7 @@ export default class TicketController {
     this.ui.drawUi();
     this.ui.addTicketClickListener(this.onAddNewTicketButtonClick.bind(this));
     this.ui.newTicketClickListener(this.onSubmitTicketButtonClick.bind(this));
+    this.ui.toggleTicketStatusListener(this.onToggleTicketStatusClick.bind(this));
   }
 
   onAddNewTicketButtonClick() {
@@ -36,6 +37,13 @@ export default class TicketController {
       name,
       description,
     };
-    console.log(obj);
+    this.methods.createTicket(obj, response => {
+      this.ui.closeModal();
+      this.ui.drawUi();
+    });
+  }
+
+  onToggleTicketStatusClick(id) {
+    this.methods.toggleTicketStatus(id);
   }
 }

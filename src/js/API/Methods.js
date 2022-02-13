@@ -51,10 +51,10 @@ export default class Methods {
     return fetcher(options);
   }
 
-  isStatuschecked(id, callback) {
+  toggleTicketStatus(id, callback) {
     const options = {
       method: 'GET',
-      query: `method=toggleStatusTicket&id=${id}`,
+      query: `method=toggleTicketStatus&id=${id}`,
       callback,
     };
     return fetcher(options);

@@ -1,0 +1,41 @@
+.tickets {
+  &-header {
+    margin-bottom: 1rem;
+    text-align: right;
+  }
+
+  .ticket {
+    display: grid;
+    grid-template-columns: 1fr 6fr 2fr 1fr;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    box-shadow: 0 0 10px 5px #ccc;
+    line-height: 1;
+
+    .checkbox {
+      text-align: center;
+      span {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &:before {
+          display: inline-block;
+          content: '';
+          width: 20px;
+          height: 20px;
+          border: 1px solid #026aa7;
+          border-radius: 50%;
+        }
+      }
+    }
+
+    .body {
+      cursor: pointer;
+    }
+  }
+}
