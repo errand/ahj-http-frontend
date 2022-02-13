@@ -11,6 +11,7 @@ export default class Ui {
     this.addTicketClickListeners = [];
     this.newTicketClickListeners = [];
     this.toggleTicketStatusListeners = [];
+    this.toggleDescriptionListeners = [];
   }
 
   bindToDOM(container) {
@@ -20,17 +21,15 @@ export default class Ui {
     this.container = container;
   }
 
-  buildTickerList(obj) {
-    if (!obj) {
-      return;
-    }
-
-    [...obj].forEach(ticket => {
-      const ticketDiv = document.createElement('div');
-      ticketDiv.classList.add('ticket');
-      ticketDiv.dataset.id = `id${ticket.id}`;
-      ticketDiv.innerHTML = `
-        <div class="checkbox" data-checkbox="${ticket.status}"><span>${ticket.status}</span></div>
+  rebuildTickerList() {
+    this.tickets.innerHTML = '';
+    this.methods.getAllTickets(response => {
+      [...response].forEach(ticket => {
+        const ticketDiv = document.createElement('div');
+        ticketDiv.classList.add('ticket');
+        ticketDiv.dataset.id = `id${ticket.id}`;
+        ticketDiv.innerHTML = `
+        <div class="checkbox" data-checkbox="${ticket.status}"><span></span></div>
         <div class="body" data-id="body"><div class="name">${ticket.name}</div></div>
         <div data-id="time">${ticket.created}</div>
         <div class="controls">
@@ -38,18 +37,11 @@ export default class Ui {
           <button class="btn-icon" type="button" data-id="delete"><i class="fa-solid fa-xmark"></i></button>
         </div>
       `;
-      ticketDiv.querySelector('.checkbox').addEventListener('click', () => this.onToggleTicketStatusClick(ticket.id));
-      ticketDiv.querySelector('[data-id="body"]').addEventListener('click', evt => this.toggleDescription(evt, ticket.id));
-      this.tickets.appendChild(ticketDiv);
+        ticketDiv.querySelector('.checkbox').addEventListener('click', () => this.onToggleTicketStatusClick(ticket.id));
+        ticketDiv.querySelector('[data-id="body"]').addEventListener('click', evt => this.onToggleDescriptionClick(ticket.id));
+        this.tickets.appendChild(ticketDiv);
+      });
     });
-  }
-
-  toggleTicketStatus(id, status) {
-    console.log(id, status);
-  }
-
-  toggleDescription(evt, id) {
-    console.log(evt, id);
   }
 
   drawUi() {
@@ -69,9 +61,7 @@ export default class Ui {
 
     this.container.appendChild(ticketsSection);
 
-    this.methods.getAllTickets(response => {
-      this.buildTickerList(response);
-    });
+    this.rebuildTickerList();
   }
 
   openModal(modalName, ticketId = '') {
@@ -188,10 +178,24 @@ export default class Ui {
     this.toggleTicketStatusListeners.forEach(o => o.call(null, id));
   }
 
+  /**
+   * Add listener to mouse click for Toggle Ticket description
+   *
+   * @param callback
+   */
+  toggleDescriptionListener(callback) {
+    this.toggleDescriptionListeners.push(callback);
+  }
+
+  onToggleDescriptionClick(id) {
+    this.toggleDescriptionListeners.forEach(o => o.call(null, id));
+  }
+
   closeModal() {
     const modal = document.querySelector('.modal');
     if (modal) {
       modal.remove();
+      document.body.classList.remove('has-modal');
     }
   }
 

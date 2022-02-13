@@ -12,6 +12,7 @@ export default class TicketController {
     this.ui.addTicketClickListener(this.onAddNewTicketButtonClick.bind(this));
     this.ui.newTicketClickListener(this.onSubmitTicketButtonClick.bind(this));
     this.ui.toggleTicketStatusListener(this.onToggleTicketStatusClick.bind(this));
+    this.ui.toggleDescriptionListener(this.onToggleDescriptionClick.bind(this));
   }
 
   onAddNewTicketButtonClick() {
@@ -39,13 +40,35 @@ export default class TicketController {
     };
     this.methods.createTicket(obj, response => {
       this.ui.closeModal();
-      this.ui.drawUi();
+      this.ui.rebuildTickerList();
     });
   }
 
   onToggleTicketStatusClick(id) {
+    const ticket = this.ui.tickets.querySelector(`[data-id="id${id}"]`);
     this.methods.toggleTicketStatus(id, response => {
-      console.log(response);
+      if (response === true) {
+        ticket.classList.add('checked');
+      } else {
+        ticket.classList.remove('checked');
+      }
+    });
+  }
+
+  onToggleDescriptionClick(id) {
+    const ticket = this.ui.tickets.querySelector(`[data-id="id${id}"]`);
+    const body = ticket.querySelector('.body');
+    this.methods.getIndex(id, response => {
+      if (body.querySelector('.description') !== null) {
+        body.querySelector('.description').remove();
+        ticket.classList.remove('with-description');
+      } else {
+        const description = document.createElement('div');
+        description.classList.add('description');
+        description.innerText = response.description;
+        ticket.classList.add('with-description');
+        body.appendChild(description);
+      }
     });
   }
 }

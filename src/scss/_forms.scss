@@ -18,6 +18,7 @@ button {
   padding: 6px 14px;
   border-radius: 3px;
   cursor: pointer;
+  transition: 0.2s;
 
   &:hover {
     background-color: darken(#026aa7, 10);
@@ -25,6 +26,7 @@ button {
 
   &.btn-icon {
     background-color: transparent;
+    padding: 0;
     color: #026aa7;
     &:hover {
       color: darken(#026aa7, 10)
