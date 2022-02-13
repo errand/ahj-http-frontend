@@ -44,6 +44,8 @@ export default class TicketController {
   }
 
   onToggleTicketStatusClick(id) {
-    this.methods.toggleTicketStatus(id);
+    this.methods.toggleTicketStatus(id, response => {
+      console.log(response);
+    });
   }
 }
