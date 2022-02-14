@@ -11,4 +11,14 @@
 ## Demo
 [GH Pages](https://errand.github.io/ahj-http-backend/) 
 
----
+## Server
+
+[Heroku](https://errand-ahj-http-backend.herokuapp.com/)
+
+**Methods:**
+
+- method=createTicket (POST)
+- method=getTicketById&id=${id}
+- method=deleteTicket&id=${id}
+- method=toggleTicketStatus&id=${id}
+- method=editTicket (POST)
