@@ -1,10 +1,8 @@
 import Methods from './API/Methods';
-import TicketController from './TicketController';
 
 export default class Ui {
   constructor() {
     this.container = null;
-    this.ctrl = new TicketController();
     this.tickets = null;
     this.methods = new Methods();
     this.addTicketButton = null;
@@ -12,6 +10,8 @@ export default class Ui {
     this.newTicketClickListeners = [];
     this.toggleTicketStatusListeners = [];
     this.toggleDescriptionListeners = [];
+    this.editTicketListeners = [];
+    this.editTicketSubmitListeners = [];
   }
 
   bindToDOM(container) {
@@ -31,7 +31,7 @@ export default class Ui {
         ticketDiv.innerHTML = `
         <div class="checkbox" data-checkbox="${ticket.status}"><span></span></div>
         <div class="body" data-id="body"><div class="name">${ticket.name}</div></div>
-        <div data-id="time">${ticket.created}</div>
+        <div class="date" data-id="time">${ticket.created}</div>
         <div class="controls">
           <button class="btn-icon" type="button" data-id="edit"><i class="fa-solid fa-pencil"></i></button>
           <button class="btn-icon" type="button" data-id="delete"><i class="fa-solid fa-xmark"></i></button>
@@ -39,6 +39,7 @@ export default class Ui {
       `;
         ticketDiv.querySelector('.checkbox').addEventListener('click', () => this.onToggleTicketStatusClick(ticket.id));
         ticketDiv.querySelector('[data-id="body"]').addEventListener('click', evt => this.onToggleDescriptionClick(ticket.id));
+        ticketDiv.querySelector('[data-id="edit"]').addEventListener('click', evt => this.onEditButtonClick(ticket.id));
         this.tickets.appendChild(ticketDiv);
       });
     });
@@ -66,6 +67,8 @@ export default class Ui {
 
   openModal(modalName, ticketId = '') {
     document.body.classList.add('has-modal');
+    let name = '';
+    let description = '';
     const modal = document.createElement('div');
     modal.classList.add('modal');
     modal.dataset.id = `modal-${modalName}`;
@@ -117,7 +120,24 @@ export default class Ui {
       }
     });
 
+    if (ticketId && modalName === 'edit') {
+      this.methods.getIndex(ticketId, response => {
+        const ticket = this.tickets.querySelector(`[data-id="id${ticketId}"]`);
+        name = ticket.querySelector('.name').innerText;
+        modal.querySelector('[data-id="modal-name"]').value = name;
+        description = response.description;
+
+        modal.querySelector('[data-id="modal-description"]').value = description;
+        modal.querySelector('[data-id="modal-submit"]').addEventListener('click', evt => {
+          if (this.validateForm(evt)) {
+            this.onEditTicketClick(evt, ticketId);
+          }
+        });
+      });
+    }
+
     document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('show'), 0);
   }
 
   validateForm(evt) {
@@ -191,11 +211,40 @@ export default class Ui {
     this.toggleDescriptionListeners.forEach(o => o.call(null, id));
   }
 
+  /**
+   * Add listener to mouse click for Edit ticket
+   *
+   * @param callback
+   */
+  editTickerListener(callback) {
+    this.editTicketListeners.push(callback);
+  }
+
+  onEditButtonClick(id) {
+    this.editTicketListeners.forEach(o => o.call(null, id));
+  }
+
+  /**
+   * Add listener to mouse click for Edit submit
+   *
+   * @param callback
+   */
+  editTickerSubmitListener(callback) {
+    this.editTicketSubmitListeners.push(callback);
+  }
+
+  onEditTicketClick(evt, id) {
+    this.editTicketSubmitListeners.forEach(o => o.call(null, evt, id));
+  }
+
   closeModal() {
     const modal = document.querySelector('.modal');
     if (modal) {
-      modal.remove();
-      document.body.classList.remove('has-modal');
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.remove();
+        document.body.classList.remove('has-modal');
+      }, 500);
     }
   }
 

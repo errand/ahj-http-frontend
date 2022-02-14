@@ -60,7 +60,7 @@ export default class Methods {
     return fetcher(options);
   }
 
-  modification(data, callback) {
+  editTicket(data, callback) {
     const options = {
       method: 'POST',
       query: 'method=editTicket',

@@ -66,6 +66,22 @@
     }
     &.with-description {
       align-items: flex-start;
+      .name, .date, .controls {
+        padding-top: 2px
+      }
+      .description {
+        padding-top: 2rem;
+        line-height: 1.5;
+      }
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      button:not(:last-child) {
+        margin-right: 5px;
+      }
     }
   }
 }

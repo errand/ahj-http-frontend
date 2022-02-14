@@ -13,6 +13,8 @@ export default class TicketController {
     this.ui.newTicketClickListener(this.onSubmitTicketButtonClick.bind(this));
     this.ui.toggleTicketStatusListener(this.onToggleTicketStatusClick.bind(this));
     this.ui.toggleDescriptionListener(this.onToggleDescriptionClick.bind(this));
+    this.ui.editTickerListener(this.onEditTicketButtonClick.bind(this));
+    this.ui.editTickerSubmitListener(this.onEditTicketSubmitButtonClick.bind(this));
   }
 
   onAddNewTicketButtonClick() {
@@ -69,6 +71,25 @@ export default class TicketController {
         ticket.classList.add('with-description');
         body.appendChild(description);
       }
+    });
+  }
+
+  onEditTicketButtonClick(id) {
+    this.ui.openModal('edit', id);
+  }
+
+  onEditTicketSubmitButtonClick(evt, id) {
+    const form = evt.target.closest('.modal-form');
+    const name = form.querySelector('[data-id="modal-name"]').value;
+    const description = form.querySelector('[data-id="modal-description"]').value;
+    const obj = {
+      id,
+      name,
+      description,
+    };
+    this.methods.editTicket(obj, response => {
+      this.ui.closeModal();
+      this.ui.rebuildTickerList();
     });
   }
 }
