@@ -40,6 +40,7 @@ export default class Ui {
         ticketDiv.querySelector('.checkbox').addEventListener('click', () => this.onToggleTicketStatusClick(ticket.id));
         ticketDiv.querySelector('[data-id="body"]').addEventListener('click', evt => this.onToggleDescriptionClick(ticket.id));
         ticketDiv.querySelector('[data-id="edit"]').addEventListener('click', evt => this.onEditButtonClick(ticket.id));
+        ticketDiv.querySelector('[data-id="delete"]').addEventListener('click', evt => this.onDeleteButtonClick(ticket.id));
         this.tickets.appendChild(ticketDiv);
       });
     });
@@ -169,7 +170,7 @@ export default class Ui {
   }
 
   onAddTicketClick(event) {
-    this.addTicketClickListeners.forEach(o => o.call(null, event));
+    this.openModal('add');
   }
 
   /**
