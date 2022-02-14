@@ -42,7 +42,7 @@ export default class Methods {
     return fetcher(options);
   }
 
-  delete(id, callback) {
+  deleteTicket(id, callback) {
     const options = {
       method: 'GET',
       query: `method=deleteTicket&id=${id}`,

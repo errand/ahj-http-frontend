@@ -6,12 +6,13 @@ export default class Ui {
     this.tickets = null;
     this.methods = new Methods();
     this.addTicketButton = null;
-    this.addTicketClickListeners = [];
+    this.loader = null;
     this.newTicketClickListeners = [];
     this.toggleTicketStatusListeners = [];
     this.toggleDescriptionListeners = [];
     this.editTicketListeners = [];
     this.editTicketSubmitListeners = [];
+    this.deleteTicketSubmitListeners = [];
   }
 
   bindToDOM(container) {
@@ -38,9 +39,9 @@ export default class Ui {
         </div>
       `;
         ticketDiv.querySelector('.checkbox').addEventListener('click', () => this.onToggleTicketStatusClick(ticket.id));
-        ticketDiv.querySelector('[data-id="body"]').addEventListener('click', evt => this.onToggleDescriptionClick(ticket.id));
-        ticketDiv.querySelector('[data-id="edit"]').addEventListener('click', evt => this.onEditButtonClick(ticket.id));
-        ticketDiv.querySelector('[data-id="delete"]').addEventListener('click', evt => this.onDeleteButtonClick(ticket.id));
+        ticketDiv.querySelector('[data-id="body"]').addEventListener('click', () => this.onToggleDescriptionClick(ticket.id));
+        ticketDiv.querySelector('[data-id="edit"]').addEventListener('click', () => this.openModal('edit', ticket.id));
+        ticketDiv.querySelector('[data-id="delete"]').addEventListener('click', () => this.openModal('delete', ticket.id));
         this.tickets.appendChild(ticketDiv);
       });
     });
@@ -57,7 +58,7 @@ export default class Ui {
       <div class="tickets-list"></div>
     `;
     this.addTicketButton = ticketsSection.querySelector('[data-id="addTicket"]');
-    this.addTicketButton.addEventListener('click', evt => this.onAddTicketClick(evt));
+    this.addTicketButton.addEventListener('click', evt => this.openModal('add', evt));
 
     this.tickets = ticketsSection.querySelector('.tickets-list');
 
@@ -114,6 +115,12 @@ export default class Ui {
         }
       });
     }
+
+    if (modalName === 'delete') {
+      modal.querySelector('[data-id="modal-submit"]').addEventListener('click', evt => {
+        this.onDeleteTicketClick(ticketId);
+      });
+    }
     modal.querySelector('[data-id="modal-cancel"]').addEventListener('click', () => this.closeModal());
     modal.addEventListener('click', (e) => {
       if (e.target.classList.contains('modal')) {
@@ -165,19 +172,6 @@ export default class Ui {
    *
    * @param callback
    */
-  addTicketClickListener(callback) {
-    this.addTicketClickListeners.push(callback);
-  }
-
-  onAddTicketClick(event) {
-    this.openModal('add');
-  }
-
-  /**
-   * Add listener to mouse click for New Ticket Button
-   *
-   * @param callback
-   */
   newTicketClickListener(callback) {
     this.newTicketClickListeners.push(callback);
   }
@@ -213,19 +207,6 @@ export default class Ui {
   }
 
   /**
-   * Add listener to mouse click for Edit ticket
-   *
-   * @param callback
-   */
-  editTickerListener(callback) {
-    this.editTicketListeners.push(callback);
-  }
-
-  onEditButtonClick(id) {
-    this.editTicketListeners.forEach(o => o.call(null, id));
-  }
-
-  /**
    * Add listener to mouse click for Edit submit
    *
    * @param callback
@@ -238,6 +219,19 @@ export default class Ui {
     this.editTicketSubmitListeners.forEach(o => o.call(null, evt, id));
   }
 
+  /**
+   * Add listener to mouse click for Delete submit
+   *
+   * @param callback
+   */
+  deleteTickerSubmitListener(callback) {
+    this.deleteTicketSubmitListeners.push(callback);
+  }
+
+  onDeleteTicketClick(id) {
+    this.deleteTicketSubmitListeners.forEach(o => o.call(null, id));
+  }
+
   closeModal() {
     const modal = document.querySelector('.modal');
     if (modal) {
@@ -247,6 +241,17 @@ export default class Ui {
         document.body.classList.remove('has-modal');
       }, 500);
     }
+  }
+
+  startLoader() {
+    const loader = document.createElement('div');
+    loader.id = 'loader';
+    document.body.appendChild(loader);
+  }
+
+  stopLoader() {
+    const loader = document.querySelector('#loader');
+    setTimeout(() => loader.remove(), 100);
   }
 
   checkBinding() {

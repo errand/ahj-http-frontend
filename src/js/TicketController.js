@@ -9,30 +9,14 @@ export default class TicketController {
   init() {
     // TODO Generate random tickets
     this.ui.drawUi();
-    this.ui.addTicketClickListener(this.onAddNewTicketButtonClick.bind(this));
     this.ui.newTicketClickListener(this.onSubmitTicketButtonClick.bind(this));
     this.ui.toggleTicketStatusListener(this.onToggleTicketStatusClick.bind(this));
     this.ui.toggleDescriptionListener(this.onToggleDescriptionClick.bind(this));
-    this.ui.editTickerListener(this.onEditTicketButtonClick.bind(this));
     this.ui.editTickerSubmitListener(this.onEditTicketSubmitButtonClick.bind(this));
-  }
-
-  onAddNewTicketButtonClick() {
-    this.ui.openModal('add');
+    this.ui.deleteTickerSubmitListener(this.onDeleteTicketSubmitButtonClick.bind(this));
   }
 
   onSubmitTicketButtonClick(evt) {
-    const modal = evt.target.closest('.modal');
-    const formType = modal.dataset.id;
-    switch (formType) {
-      case 'modal-add':
-        this.addNewTicket(evt);
-        break;
-      default: this.deleteTicket();
-    }
-  }
-
-  addNewTicket(evt) {
     const form = evt.target.closest('.modal-form');
     const name = form.querySelector('[data-id="modal-name"]').value;
     const description = form.querySelector('[data-id="modal-description"]').value;
@@ -41,9 +25,10 @@ export default class TicketController {
       description,
     };
     this.methods.createTicket(obj, response => {
+      this.ui.startLoader();
       this.ui.closeModal();
       this.ui.rebuildTickerList();
-    });
+    }).then(() => this.ui.stopLoader());
   }
 
   onToggleTicketStatusClick(id) {
@@ -74,10 +59,6 @@ export default class TicketController {
     });
   }
 
-  onEditTicketButtonClick(id) {
-    this.ui.openModal('edit', id);
-  }
-
   onEditTicketSubmitButtonClick(evt, id) {
     const form = evt.target.closest('.modal-form');
     const name = form.querySelector('[data-id="modal-name"]').value;
@@ -88,8 +69,19 @@ export default class TicketController {
       description,
     };
     this.methods.editTicket(obj, response => {
+      this.ui.startLoader();
       this.ui.closeModal();
       this.ui.rebuildTickerList();
-    });
+    }).then(() => this.ui.stopLoader());
+  }
+
+  onDeleteTicketSubmitButtonClick(id) {
+    this.methods.deleteTicket(id, response => {
+      this.ui.startLoader();
+      this.ui.closeModal();
+      const ticker = this.ui.tickets.querySelector(`[data-id="id${id}"]`);
+      ticker.classList.add('hide');
+      setTimeout(() => ticker.remove(), 500);
+    }).then(() => this.ui.stopLoader());
   }
 }

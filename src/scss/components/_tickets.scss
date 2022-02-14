@@ -83,5 +83,8 @@
         margin-right: 5px;
       }
     }
+    &.hide {
+      opacity: 0;
+    }
   }
 }
