@@ -25,7 +25,6 @@ export default class Ui {
   rebuildTickerList() {
     this.tickets.innerHTML = '';
     this.methods.getAllTickets(response => {
-      this.startLoader();
       [...response].forEach(ticket => {
         const ticketDiv = document.createElement('div');
         ticketDiv.classList.add('ticket');
@@ -45,7 +44,7 @@ export default class Ui {
         ticketDiv.querySelector('[data-id="delete"]').addEventListener('click', () => this.openModal('delete', ticket.id));
         this.tickets.appendChild(ticketDiv);
       });
-    }).then(() => this.stopLoader());
+    });
   }
 
   drawUi() {
